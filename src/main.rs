@@ -11,7 +11,8 @@ use rocket_cors::{AllowedOrigins};
 
 #[launch]
 fn rocket() -> _ {
-    let allowed_origins = AllowedOrigins::some_exact(&["http://localhost:4200"]);
+    // let allowed_origins = AllowedOrigins::some_exact(&["http://localhost:4200"]);
+    let allowed_origins = AllowedOrigins::all();
     let cors = rocket_cors::CorsOptions {
         allowed_origins,
         ..Default::default()
