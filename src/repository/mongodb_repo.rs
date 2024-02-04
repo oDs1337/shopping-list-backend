@@ -4,7 +4,7 @@ use dotenv::dotenv;
 
 use mongodb::{
     bson::{extjson::de::Error, oid::ObjectId, doc},
-    results::{InsertOneResult, DeleteResult},
+    results::{InsertOneResult, DeleteResult, UpdateResult},
     sync::{Client, Collection},
 };
 
@@ -71,5 +71,24 @@ impl MongoRepo {
             .ok()
             .expect("Error deleting item");
         Ok(item_detail)
+    }
+
+    pub fn update_item(&self, id: &String, new_item: Item) -> Result<UpdateResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let new_doc = doc! {
+                "$set":
+                    {
+                        "id": new_item.id,
+                        "item_name": new_item.item_name,
+                        "item_price": new_item.item_price
+                    },
+            };
+        let updated_doc = self
+            .col
+            .update_one(filter, new_doc, None)
+            .ok()
+            .expect("Error updating item");
+        Ok(updated_doc)
     }
 }
