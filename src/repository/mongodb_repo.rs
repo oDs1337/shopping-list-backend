@@ -4,7 +4,7 @@ use dotenv::dotenv;
 
 use mongodb::{
     bson::{extjson::de::Error, oid::ObjectId, doc},
-    results::{InsertOneResult},
+    results::{InsertOneResult, DeleteResult},
     sync::{Client, Collection},
 };
 
@@ -60,5 +60,16 @@ impl MongoRepo {
             .expect("Error getting list of users");
         let items = cursors.map(|doc| doc.unwrap()).collect();
         Ok(items)
+    }
+
+    pub fn delete_item(&self, id: &String) -> Result<DeleteResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let item_detail = self
+            .col
+            .delete_one(filter, None)
+            .ok()
+            .expect("Error deleting item");
+        Ok(item_detail)
     }
 }

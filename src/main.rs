@@ -5,7 +5,7 @@ mod repository;
 #[macro_use]
 extern crate rocket;
 use rocket::{get, http::Status, serde::json::Json};
-use api::shopping_list_api::{add_item, get_item, get_all_items};
+use api::shopping_list_api::{add_item, get_item, get_all_items, delete_item};
 use repository::mongodb_repo::MongoRepo;
 use rocket_cors::{AllowedOrigins};
 
@@ -24,4 +24,5 @@ fn rocket() -> _ {
         .mount("/", routes![add_item])
         .mount("/", routes![get_item])
         .mount("/", routes![get_all_items])
+        .mount("/", routes![delete_item])
 }

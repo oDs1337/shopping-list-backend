@@ -40,3 +40,22 @@ pub fn get_all_items(db: &State<MongoRepo>) -> Result<Json<Vec<Item>>, Status>{
         Err(_) => Err(Status::InternalServerError),
     }
 }
+
+#[delete("/delete_item/<path>")]
+pub fn delete_item(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
+    let id = path;
+    if id.is_empty() {
+        return Err(Status::BadRequest);
+    };
+    let result = db.delete_item(&id);
+    match result {
+        Ok(res) => {
+            if res.deleted_count == 1 {
+                return Ok(Json("Item successfully deleted!"));
+            } else {
+                return Err(Status::NotFound);
+            }
+        }
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
